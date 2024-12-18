@@ -1,22 +1,21 @@
-// src/components/ProtectedRoute.tsx
 'use client';
 
-import { useAuth } from '../context/AuthContext';
+import { Auth } from '@supabase/ui';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { ReactNode, useEffect } from 'react';
 
-const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-    const { user, isLoading } = useAuth();
+const ProtectedRoute = ({ children }: { children: ReactNode }) => {
+    const { user } = Auth.useUser();
     const router = useRouter();
 
     useEffect(() => {
-        if (!isLoading && !user) {
-            router.push('/login');
+        if (!user) {
+            router.push('/auth'); // Redirect to login/signup page if not authenticated
         }
-    }, [user, isLoading, router]);
+    }, [user, router]);
 
-    if (isLoading) {
-        return <div>Loading...</div>;
+    if (!user) {
+        return <div>Loading...</div>; // Show a loading state while redirecting
     }
 
     return <>{children}</>;
